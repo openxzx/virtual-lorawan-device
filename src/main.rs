@@ -169,11 +169,10 @@ async fn packet_muxer(
             loop {
                 let msg = client_rx.recv().await.ok_or(Error::RxChannelSemtechUdpClientRuntimeClosed)?;
                 if let client_runtime::Event::DownlinkRequest(downlink) = msg {
-
                     if let Some(scheduled_time) = downlink.pull_resp.data.txpk.time.tmst() {
                         let time = instant.elapsed().as_micros() as u32;
                         if scheduled_time > time {
-                            let downlink = Box::new(downlink).clone();
+                            let downlink = Box::new(downlink);
                             let delay = scheduled_time - time;
                             for sender in &senders {
                                 let sender = sender.clone();
